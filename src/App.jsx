@@ -1,297 +1,526 @@
-import { Canvas } from '@react-three/fiber'
-import { Float, MeshDistortMaterial, OrbitControls } from '@react-three/drei'
-import { useRef, useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { 
-  Code2, 
-  Sparkles, 
-  Mail, 
-  Github, 
-  Linkedin, 
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { IconArrowRight, IconSparkles } from '@tabler/icons-react'
+import {
+  ArrowDown,
   ArrowRight,
-  Volume2,
-  Menu
+  ArrowUpRight,
+  Award,
+  BriefcaseBusiness,
+  Check,
+  Code2,
+  FileBadge,
+  Github,
+  Layers3,
+  Menu,
+  Music2,
+  Palette,
+  Send,
+  Sparkles,
+  X,
 } from 'lucide-react'
+import { LiquidGlass } from './components/ui/LiquidGlass.jsx'
+import { LoadingScreen } from './components/LoadingScreen.jsx'
 
-gsap.registerPlugin(ScrollTrigger)
+const Lanyard = lazy(() => import('./components/Lanyard.jsx'))
+const LOADER_MIN_DURATION = 2200
+const LOADER_TIMEOUT = 4000
+const LOADER_EXIT_DURATION = 320
 
-function Scene() {
-  return (
-    <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
-      <pointLight position={[-10, -10, -5]} color="#3b82f6" intensity={2} />
-      
-      <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-        <mesh>
-          <icosahedronGeometry args={[1.2, 1]} />
-          <MeshDistortMaterial
-            color="#3b82f6"
-            attach="material"
-            distort={0.4}
-            speed={2}
-            roughness={0.2}
-            metalness={0.8}
-          />
-        </mesh>
-      </Float>
+const projects = [
+  {
+    title: 'Neon Dashboard',
+    description: 'Dashboard analitik dengan visualisasi data dan antarmuka yang responsif.',
+    tags: ['React', 'Three.js', 'GSAP'],
+    icon: Layers3,
+    tone: 'violet',
+  },
+  {
+    title: 'AI Content Bot',
+    description: 'Eksperimen otomasi untuk membantu proses pembuatan dan pengelolaan konten.',
+    tags: ['React', 'Tailwind', 'API'],
+    icon: Sparkles,
+    tone: 'blue',
+  },
+  {
+    title: 'Student Portal',
+    description: 'Portal data siswa dengan pengalaman yang sederhana dan mudah digunakan.',
+    tags: ['React', 'Supabase', 'UI'],
+    icon: Code2,
+    tone: 'cyan',
+  },
+]
 
-      <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1.5} position={[2.5, 1, -1]}>
-        <mesh>
-          <torusGeometry args={[0.6, 0.2, 16, 32]} />
-          <meshStandardMaterial color="#a855f7" metalness={0.9} roughness={0.1} />
-        </mesh>
-      </Float>
-
-      <Float speed={2.5} rotationIntensity={1.2} floatIntensity={2} position={[-2.2, -0.8, -0.5]}>
-        <mesh>
-          <octahedronGeometry args={[0.8]} />
-          <meshStandardMaterial color="#06b6d4" metalness={0.7} roughness={0.2} />
-        </mesh>
-      </Float>
-
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-    </Canvas>
-  )
-}
+const skills = [
+  { name: 'React', type: 'Frontend' },
+  { name: 'JavaScript', type: 'Frontend' },
+  { name: 'Tailwind CSS', type: 'Styling' },
+  { name: 'Three.js', type: '3D & WebGL' },
+  { name: 'GSAP', type: 'Animation' },
+  { name: 'Figma', type: 'Design' },
+]
 
 function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const links = [
+    { href: '#home', label: 'Home' },
+    { href: '#about', label: 'About' },
+    { href: '#portfolio', label: 'Portfolio' },
+    { href: '#contact', label: 'Contact' },
+  ]
+
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl">
-      <nav className="flex items-center justify-between px-6 py-3 rounded-full bg-white/5 backdrop-blur-xl border border-white/10">
-        <span className="font-display font-bold text-lg tracking-tight">Deny Nurcahyanto.</span>
-        <div className="hidden md:flex items-center gap-8 text-sm text-white/70">
-          <a href="#home" className="hover:text-white transition">Home</a>
-          <a href="#about" className="hover:text-white transition">About</a>
-          <a href="#work" className="hover:text-white transition">Work</a>
-          <a href="#contact" className="hover:text-white transition">Contact</a>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="p-2 rounded-full hover:bg-white/10 transition">
-            <Volume2 size={16} className="text-blue-400" />
-          </button>
-          <button className="md:hidden p-2 rounded-full hover:bg-white/10 transition">
-            <Menu size={18} />
-          </button>
-        </div>
-      </nav>
+    <header className="site-header">
+      <div className="navbar-anchor">
+        <LiquidGlass className="navbar-glass" contentClassName="navbar-glass-content" style={{ backgroundColor: 'rgb(14 16 30 / 62%)' }}>
+          <nav className="navbar" aria-label="Navigasi utama">
+            <a className="brand" href="#home" onClick={() => setMenuOpen(false)}>
+              <span className="brand-mark"><Code2 size={17} /></span>
+              <span>Deny<span className="brand-muted">.dev</span></span>
+            </a>
+            <div className="nav-links">
+              {links.map((link) => (
+                <a key={link.href} href={link.href}>{link.label}</a>
+              ))}
+            </div>
+            <span className="nav-caption">PORTFOLIO / 2026</span>
+            <button
+              className="menu-toggle"
+              type="button"
+              aria-label={menuOpen ? 'Tutup navigasi' : 'Buka navigasi'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </nav>
+        </LiquidGlass>
+        {menuOpen && (
+          <div className="nav-menu">
+            {links.map((link, index) => (
+              <a key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>
+                <span className="nav-number">0{index + 1}</span>
+                {link.label}
+                <ArrowUpRight size={16} />
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
     </header>
   )
 }
 
+function SectionHeading({ eyebrow, title, description, centered = false }) {
+  return (
+    <div className={`section-heading${centered ? ' centered' : ''}`}>
+      <span className="eyebrow"><span />{eyebrow}</span>
+      <h2>{title}</h2>
+      {description && <p>{description}</p>}
+    </div>
+  )
+}
+
 export default function App() {
-  const heroRef = useRef(null)
-  const aboutRef = useRef(null)
-  const workRef = useRef(null)
+  const [activeTab, setActiveTab] = useState('Projects')
+  const [copied, setCopied] = useState(false)
+  const [formError, setFormError] = useState('')
+  const [lanyardReady, setLanyardReady] = useState(false)
+  const [loaderVisible, setLoaderVisible] = useState(true)
+  const [loaderExiting, setLoaderExiting] = useState(false)
+  const loaderStartedAt = useRef(performance.now())
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from('.hero-title', {
-        y: 80,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power3.out',
-        delay: 0.3
-      })
-      gsap.from('.hero-sub', {
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        delay: 0.6
-      })
-      gsap.from('.hero-cta', {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: 0.9
-      })
+    let dismissed = false
+    let readyTimer
+    let fallbackTimer
+    let exitTimer
 
-      gsap.from('.about-card', {
-        scrollTrigger: {
-          trigger: aboutRef.current,
-          start: 'top 80%',
-        },
-        y: 60,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power2.out'
-      })
+    const dismissLoader = () => {
+      if (dismissed) return
+      dismissed = true
+      setLoaderExiting(true)
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      exitTimer = window.setTimeout(
+        () => setLoaderVisible(false),
+        reducedMotion ? 0 : LOADER_EXIT_DURATION,
+      )
+    }
 
-      gsap.from('.project-card', {
-        scrollTrigger: {
-          trigger: workRef.current,
-          start: 'top 75%',
-        },
-        y: 80,
-        opacity: 0,
-        duration: 0.9,
-        stagger: 0.2,
-        ease: 'power3.out'
-      })
-    })
+    const elapsed = performance.now() - loaderStartedAt.current
+    if (lanyardReady) {
+      readyTimer = window.setTimeout(
+        dismissLoader,
+        Math.max(0, LOADER_MIN_DURATION - elapsed),
+      )
+    }
+    fallbackTimer = window.setTimeout(
+      dismissLoader,
+      Math.max(0, LOADER_TIMEOUT - elapsed),
+    )
 
-    return () => ctx.revert()
+    return () => {
+      window.clearTimeout(readyTimer)
+      window.clearTimeout(fallbackTimer)
+      window.clearTimeout(exitTimer)
+    }
+  }, [lanyardReady])
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+
+    let cancelled = false
+    let idleCallbackId
+    let fallbackTimer
+    let animationContext
+
+    const loadAnimations = async () => {
+      try {
+        const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+          import('gsap'),
+          import('gsap/ScrollTrigger'),
+        ])
+        if (cancelled) return
+        gsap.registerPlugin(ScrollTrigger)
+        animationContext = gsap.context(() => {
+          gsap.from('.hero-copy > *', {
+            y: 28,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.12,
+            ease: 'power3.out',
+            delay: 0.15,
+          })
+
+          gsap.utils.toArray('.reveal').forEach((element) => {
+            gsap.from(element, {
+              y: 30,
+              opacity: 0,
+              duration: 0.7,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: element,
+                start: 'top 88%',
+                once: true,
+              },
+            })
+          })
+        })
+      } catch (error) {
+        console.error('Gagal memuat animasi portfolio:', error)
+      }
+    }
+
+    if ('requestIdleCallback' in window) {
+      idleCallbackId = window.requestIdleCallback(loadAnimations, { timeout: 1000 })
+    } else {
+      fallbackTimer = window.setTimeout(loadAnimations, 250)
+    }
+
+    return () => {
+      cancelled = true
+      if (idleCallbackId !== undefined) window.cancelIdleCallback(idleCallbackId)
+      window.clearTimeout(fallbackTimer)
+      animationContext?.revert()
+    }
   }, [])
 
-  const projects = [
-    {
-      title: 'Neon Dashboard',
-      desc: 'Real-time analytics dashboard with 3D visualizations',
-      tags: ['React', 'Three.js', 'GSAP'],
-      color: 'from-blue-500/20 to-cyan-500/20'
-    },
-    {
-      title: 'AI Content Bot',
-      desc: 'Automated article generation & publishing system',
-      tags: ['React', 'Tailwind', 'API'],
-      color: 'from-purple-500/20 to-pink-500/20'
-    },
-    {
-      title: 'Student Portal',
-      desc: 'Centralized student data management platform',
-      tags: ['React', 'Supabase', 'GSAP'],
-      color: 'from-cyan-500/20 to-blue-500/20'
+  async function handleContactSubmit(event) {
+    event.preventDefault()
+    setCopied(false)
+    setFormError('')
+
+    const form = event.currentTarget
+    const formData = new FormData(form)
+    const draft = [
+      `Nama: ${formData.get('name')}`,
+      `Email: ${formData.get('email')}`,
+      '',
+      String(formData.get('message')),
+    ].join('\n')
+
+    try {
+      await navigator.clipboard.writeText(draft)
+      setCopied(true)
+      form.reset()
+    } catch (error) {
+      setFormError('Pesan tidak dapat disalin. Periksa izin clipboard browser Anda.')
+      console.error('Gagal menyalin pesan kontak:', error)
     }
-  ]
+  }
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
-      {/* 3D Background */}
-      <div className="fixed inset-0 -z-10">
-        <Scene />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050510]/80 via-[#050510]/40 to-[#050510]" />
+    <div className="app-shell">
+      {loaderVisible && <LoadingScreen exiting={loaderExiting} />}
+      <div className="site-background" aria-hidden="true">
+        <div className="nebula nebula-one" />
+        <div className="nebula nebula-two" />
+        <div className="background-grid" />
       </div>
 
       <Navbar />
 
-      {/* Hero */}
-      <section id="home" ref={heroRef} className="relative min-h-screen flex items-center justify-center px-6">
-        <div className="text-center max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm mb-8">
-            <Sparkles size={14} className="text-blue-400" />
-            <span className="text-white/70">Creative Fullstack Developer</span>
-          </div>
-          <h1 className="hero-title font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-none mb-6">
-            Building <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">immersive</span>
-            <br />digital experiences
-          </h1>
-          <p className="hero-sub text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10">
-            Junior developer specializing in React, Three.js & modern web animations. 
-            Turning ideas into interactive 3D products.
-          </p>
-          <div className="hero-cta flex flex-wrap items-center justify-center gap-4">
-            <a href="#work" className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 transition font-medium">
-              View Work <ArrowRight size={18} />
-            </a>
-            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/20 hover:bg-white/5 transition">
-              Contact Me
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* About */}
-      <section id="about" ref={aboutRef} className="relative py-32 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">About Me</h2>
-          <p className="text-white/60 max-w-2xl mb-16">
-            Passionate about creating beautiful, functional digital experiences with modern web technologies.
-          </p>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { icon: Code2, title: 'Frontend', desc: 'React, Tailwind CSS, GSAP animations' },
-              { icon: Sparkles, title: '3D & Graphics', desc: 'Three.js, React Three Fiber, WebGL' },
-              { icon: Mail, title: 'Tools', desc: 'Vite, Vercel, Lucide, Spotify widgets' }
-            ].map((item, i) => (
-              <div key={i} className="about-card p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition">
-                <item.icon className="text-blue-400 mb-4" size={28} />
-                <h3 className="font-display text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-white/60 text-sm">{item.desc}</p>
+      <main>
+        <section className="hero-section" id="home">
+          <div className="hero-orbit orbit-one" aria-hidden="true" />
+          <div className="hero-orbit orbit-two" aria-hidden="true" />
+          <Suspense fallback={null}>
+            <div className="lanyard-stage" role="img" aria-label="Ilustrasi kartu lanyard 3D Deny">
+              <Lanyard
+                className="lanyard-scene"
+                style={{ width: '100%', height: '100%' }}
+                frontImage="/lanyard-front.jpeg"
+                backImage="/lanyard-back.jpeg"
+                onReady={() => setLanyardReady(true)}
+                cardColor="#ffffff"
+                strapColor="#111111"
+                strapWidth={0.8}
+                strapLength={0.7}
+                size={0.5}
+                breeze={0.24}
+                damping={0.58}
+              />
+            </div>
+          </Suspense>
+          <div className="hero-copy">
+            <LiquidGlass
+              className="hero-glass-kicker"
+              contentClassName="hero-kicker"
+              radius={999}
+              bevelDepth={8}
+              scale={20}
+              aberration={1}
+              frost={0.25}
+            >
+              <IconSparkles size={14} aria-hidden="true" />
+              <span>JUNIOR DEVELOPER / INDONESIA</span>
+            </LiquidGlass>
+            <h1>
+              Membangun
+              <span>hal digital.</span>
+            </h1>
+            <p className="hero-role">React &amp; Three.js Enthusiast</p>
+            <p className="hero-description">
+              Halo, saya Deny — developer pemula yang senang mengubah ide menjadi
+              pengalaman web yang berguna, intuitif, dan terasa menyenangkan.
+            </p>
+            <div className="hero-actions">
+              <a
+                className="button button-primary hero-glass-cta"
+                href="#portfolio"
+              >
+                Lihat Projek <IconArrowRight size={17} aria-hidden="true" />
+              </a>
+              <a className="button button-quiet" href="#contact">
+                Hubungi Saya <ArrowUpRight size={17} />
+              </a>
+            </div>
+            <div className="hero-bottom">
+              <div className="hero-socials">
+                <span>FIND ME</span>
+                <a href="https://github.com/DenyTyz" target="_blank" rel="noreferrer" aria-label="GitHub DenyTyz"><Github size={17} /></a>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Projects */}
-      <section id="work" ref={workRef} className="relative py-32 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Selected Work</h2>
-          <p className="text-white/60 mb-16">Projects built with React, Three.js & modern tools.</p>
-          <div className="grid md:grid-cols-3 gap-6">
-            {projects.map((p, i) => (
-              <div key={i} className={`project-card group p-8 rounded-3xl bg-gradient-to-br ${p.color} border border-white/10 backdrop-blur-sm hover:scale-[1.02] transition-transform duration-300`}>
-                <div className="h-40 rounded-2xl bg-black/30 mb-6 flex items-center justify-center">
-                  <Code2 size={48} className="text-white/20 group-hover:text-blue-400 transition" />
-                </div>
-                <h3 className="font-display text-xl font-semibold mb-2">{p.title}</h3>
-                <p className="text-white/60 text-sm mb-4">{p.desc}</p>
-                <div className="flex flex-wrap gap-2">
-                  {p.tags.map(t => (
-                    <span key={t} className="text-xs px-3 py-1 rounded-full bg-white/10">{t}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Spotify + Contact */}
-      <section id="contact" className="relative py-32 px-6">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-start">
-          <div>
-            <h2 className="font-display text-4xl font-bold mb-4">Currently Listening</h2>
-            <p className="text-white/60 mb-8">Daily Rotation — coding soundtrack</p>
-            <iframe 
-              style={{ borderRadius: 12 }} 
-              src="https://open.spotify.com/embed/playlist/3XXwLc91K6JYhtotQO98S4?utm_source=generator&theme=dark" 
-              width="100%" 
-              height="352" 
-              frameBorder="0" 
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-              loading="lazy"
-              title="Spotify Playlist"
-            />
-          </div>
-          <div>
-            <h2 className="font-display text-4xl font-bold mb-4">Get in Touch</h2>
-            <p className="text-white/60 mb-8">Have a project in mind? Let's talk.</p>
-            <form className="space-y-4">
-              <input 
-                type="text" 
-                placeholder="Your name" 
-                className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none transition"
-              />
-              <input 
-                type="email" 
-                placeholder="Email address" 
-                className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none transition"
-              />
-              <textarea 
-                placeholder="Message" 
-                rows={4}
-                className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none transition resize-none"
-              />
-              <button type="submit" className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 transition font-medium">
-                Send Message
-              </button>
-            </form>
-            <div className="flex gap-4 mt-8">
-              <a href="#" className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition"><Github size={20} /></a>
-              <a href="#" className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition"><Linkedin size={20} /></a>
-              <a href="#" className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition"><Mail size={20} /></a>
+              <a className="scroll-cue" href="#about">
+                <span>GULIR UNTUK MENGENAL SAYA</span><ArrowDown size={14} />
+              </a>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <footer className="py-12 text-center text-white/40 text-sm">
-        Built with React, Tailwind, Three.js, GSAP & deployed on Vercel
+        <section className="about-section section-wrap" id="about">
+          <SectionHeading
+            eyebrow="A LITTLE ABOUT ME"
+            title="About Me"
+            description="Senang mengeksplorasi teknologi dan merancang pengalaman digital yang terasa hidup."
+          />
+          <div className="about-layout">
+            <article className="profile-card reveal">
+              <div className="profile-card-label"><span /> AVAILABLE FOR CREATIVE PROJECTS</div>
+              <div className="profile-monogram">DN<span>.</span></div>
+              <h3>Hi, I&apos;m<br /><span>Deny Nurcahyanto</span></h3>
+              <p>Frontend developer yang tertarik pada pengalaman interaktif dan visual 3D di web.</p>
+              <a className="text-link" href="#contact">Mari terhubung <ArrowRight size={15} /></a>
+              <div className="profile-card-index">01 / PROFILE</div>
+            </article>
+            <div className="about-details">
+              <div className="about-copy reveal">
+                <p className="lead-copy">
+                  Saya suka memadukan <span>teknologi dan kreativitas</span> untuk
+                  menciptakan produk digital yang fungsional sekaligus menyenangkan
+                  digunakan.
+                </p>
+                <p>
+                  Dari antarmuka yang rapi hingga eksperimen 3D, saya terus belajar
+                  membangun web yang responsif, intuitif, dan punya karakter.
+                </p>
+              </div>
+              <div className="focus-grid">
+                <article className="focus-card reveal">
+                  <Code2 size={20} />
+                  <span className="focus-number">01</span>
+                  <h3>Web Development</h3>
+                  <p>Mengubah ide menjadi antarmuka yang cepat dan mudah digunakan.</p>
+                </article>
+                <article className="focus-card reveal">
+                  <Palette size={20} />
+                  <span className="focus-number">02</span>
+                  <h3>Visual &amp; Interaction</h3>
+                  <p>Memperhatikan detail visual, motion, dan pengalaman pengguna.</p>
+                </article>
+              </div>
+            </div>
+          </div>
+          <div className="stats-row reveal">
+            <div><strong>03</strong><span>PROJECTS</span></div>
+            <div><strong>06</strong><span>TOOLS</span></div>
+            <div><strong>02</strong><span>FOCUS AREAS</span></div>
+            <div className="stats-note"><BriefcaseBusiness size={17} /><span>Selalu terbuka untuk belajar dan berkolaborasi</span></div>
+          </div>
+          <div className="journey-grid reveal">
+            <article>
+              <span className="journey-index">01 / EDUCATION</span>
+              <h3>Pendidikan</h3>
+              <p>Informasi pendidikan akan ditambahkan setelah detailnya dikonfirmasi.</p>
+            </article>
+            <article>
+              <span className="journey-index">02 / EXPERIENCE</span>
+              <h3>Pengalaman</h3>
+              <p>Untuk saat ini, portfolio ini berfokus pada proses belajar dan eksplorasi proyek.</p>
+            </article>
+          </div>
+        </section>
+
+        <section className="music-section">
+          <div className="music-glow" aria-hidden="true" />
+          <div className="music-content section-wrap reveal">
+            <div>
+              <span className="eyebrow"><Music2 size={14} /> ON REPEAT</span>
+              <h2>A little music.<br /><span>A lot of ideas.</span></h2>
+              <p>Musik yang menemani proses merancang, mencoba, dan mewujudkan ide.</p>
+              <span className="music-note">Playlist Deny akan ditautkan di sini.</span>
+            </div>
+            <div className="music-player">
+              <div className="record-art"><Music2 size={28} /></div>
+              <div className="track-info">
+                <span>NOW PLAYING</span>
+                <strong>Music for making</strong>
+                <small>Playlist pilihan akan segera hadir</small>
+              </div>
+              <Music2 className="music-player-icon" size={20} aria-hidden="true" />
+            </div>
+          </div>
+        </section>
+
+        <section className="portfolio-section section-wrap" id="portfolio">
+          <SectionHeading
+            eyebrow="SELECTED WORK"
+            title="Portfolio"
+            description="Beberapa eksplorasi dan teknologi yang saya gunakan."
+          />
+          <div className="portfolio-tabs" role="tablist" aria-label="Konten portfolio">
+            {['Projects', 'Certificates', 'Achievements', 'Tech Stack'].map((tab) => (
+              <button
+                key={tab}
+                className={activeTab === tab ? 'active' : ''}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab === 'Projects' ? <Layers3 size={15} /> : tab === 'Certificates' ? <FileBadge size={15} /> : tab === 'Achievements' ? <Award size={15} /> : <Code2 size={15} />}
+                {tab}
+              </button>
+            ))}
+          </div>
+          {activeTab === 'Projects' && (
+            <div className="project-grid" role="tabpanel">
+              {projects.map((project, index) => {
+                const ProjectIcon = project.icon
+                return (
+                  <article className={`project-card project-${project.tone} reveal`} key={project.title}>
+                    <div className="project-art">
+                      <span className="project-index">0{index + 1} / CONCEPT</span>
+                      <div className="project-art-orbit" />
+                      <ProjectIcon size={34} strokeWidth={1.4} />
+                      <ArrowUpRight className="project-arrow" size={18} />
+                    </div>
+                    <div className="project-card-content">
+                      <h3>{project.title}</h3>
+                      <p>{project.description}</p>
+                      <div className="tag-list">
+                        {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                      </div>
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
+          )}
+          {activeTab === 'Tech Stack' && (
+            <div className="skills-grid" role="tabpanel">
+              {skills.map((skill, index) => (
+                <article className="skill-card reveal" key={skill.name}>
+                  <span className="skill-index">0{index + 1}</span>
+                  <div><strong>{skill.name}</strong><span>{skill.type}</span></div>
+                  <ArrowUpRight size={16} />
+                </article>
+              ))}
+            </div>
+          )}
+          {['Certificates', 'Achievements'].includes(activeTab) && (
+            <div className="empty-portfolio reveal" role="tabpanel">
+              {activeTab === 'Certificates' ? <FileBadge size={23} /> : <Award size={23} />}
+              <p>Belum ada {activeTab === 'Certificates' ? 'sertifikat' : 'pencapaian'} yang ditampilkan.</p>
+            </div>
+          )}
+        </section>
+
+        <section className="contact-section section-wrap" id="contact">
+          <SectionHeading
+            eyebrow="LET'S CONNECT"
+            title="Ada ide menarik?"
+            description="Ceritakan apa yang ingin kamu bangun. Saya senang mendengar ide baru."
+            centered
+          />
+          <div className="contact-layout">
+            <div className="contact-intro reveal">
+              <span className="contact-icon"><Send size={20} /></span>
+              <h3>Hubungi saya</h3>
+              <p>Isi pesan di samping untuk menyalin draft dan mengirimkannya melalui aplikasi pilihanmu.</p>
+              <div className="social-links">
+                <a href="https://github.com/DenyTyz" target="_blank" rel="noreferrer"><Github size={17} /> GitHub <ArrowUpRight size={14} /></a>
+              </div>
+            </div>
+            <form className="contact-form reveal" onSubmit={handleContactSubmit}>
+              <label>
+                Nama
+                <input name="name" type="text" placeholder="Nama kamu" autoComplete="name" required />
+              </label>
+              <label>
+                Email
+                <input name="email" type="email" placeholder="email@contoh.com" autoComplete="email" required />
+              </label>
+              <label>
+                Pesan
+                <textarea name="message" rows="4" placeholder="Ceritakan ide atau proyekmu..." required />
+              </label>
+              <button className="button button-primary submit-button" type="submit">
+                {copied ? <>Pesan Tersalin <Check size={17} /></> : <>Salin Pesan <ArrowRight size={17} /></>}
+              </button>
+              {copied && <p className="form-feedback" role="status">Draft pesan tersalin. Tempelkan ke email atau aplikasi pesan pilihanmu.</p>}
+              {formError && <p className="form-error" role="alert">{formError}</p>}
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <a className="brand" href="#home">
+          <span className="brand-mark"><Code2 size={17} /></span>
+          <span>Deny<span className="brand-muted">.dev</span></span>
+        </a>
+        <span>© 2026 Deny Nurcahyanto. Built with curiosity.</span>
+        <a className="back-to-top" href="#home">Back to top <ArrowUpRight size={14} /></a>
       </footer>
     </div>
   )

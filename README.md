@@ -7,7 +7,13 @@
 - **Lucide React** icons
 - **Google Fonts** (Inter, JetBrains Mono, Space Grotesk)
 - **Spotify Embed** widget
+- **React Bits Lanyard** interactive 3D component (Three.js)
 - Siap deploy ke **Vercel**
+
+Komponen lanyard menggunakan lisensi MIT + Commons Clause. Lihat
+[THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md) untuk atribusi dan ketentuan
+penggunaannya. Artwork depan dan belakang kartu di `public/lanyard-front.jpeg`
+dan `public/lanyard-back.jpeg` disediakan untuk portfolio ini.
 
 ## Cara Menjalankan
 
